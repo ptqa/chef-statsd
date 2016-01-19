@@ -58,13 +58,8 @@ user node["statsd"]["username"] do
   shell "/bin/false"
 end
 
-runit_service "statsd" do
-  action [:enable, :start]
-  default_logger true
-  options ({
-    :user => node['statsd']['username'],
-    :statsd_dir => node['statsd']['dir'],
-    :conf_dir => node['statsd']['conf_dir'],
-    :nodejs_bin => node['statsd']['nodejs_bin']
-  })
+poise_service_runit 'statsd' do
+  provider :runit
+  user node['statsd']['username']
+  command "#{node['statsd']['nodejs_bin']} #{node['statsd']['dir']}/stats.js #{node['statsd']['conf_dir']}/config.js"
 end
